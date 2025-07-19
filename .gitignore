@@ -1,0 +1,21 @@
+# Unity folders to ignore
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Oo]bj/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE & project junk
+.vscode/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd

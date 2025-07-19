@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38b55d1b5b9f12e489ebd2a4e2e9e288, type: 3}
+  m_Name: Cleric
+  m_EditorClassIdentifier: 
+  className: Cleric
+  classIcon: {fileID: 0}
+  classDescription: INT-based Healer/Damage Hybrid. Balanced healing and damage.
+  classColor: {r: 0.8, g: 0.8, b: 0.2, a: 1}
+  baseStrength: 8
+  baseAgility: 6
+  baseIntelligence: 12
+  baseDefense: 6
+  baseVitality: 10
+  baseHealth: 100
+  basicAttack:
+    skillName: Smite
+    cooldown: 0
+    description: 'Hybrid, Sustain: 100% INT damage, heal lowest HP ally for 25% of
+      damage dealt'
+    skillType: 0
+    targetType: 0
+    effectType: 5
+  activeSkills:
+  - skillName: Radiant Heal
+    cooldown: 2
+    description: 'Single-Target Heal: Heal one ally for 150% INT'
+    skillType: 1
+    targetType: 2
+    effectType: 1
+  - skillName: Shield of Faith
+    cooldown: 3
+    description: 'Shielding: Apply shield = 120% INT for 2 turns'
+    skillType: 1
+    targetType: 2
+    effectType: 2
+  - skillName: Purify
+    cooldown: 3
+    description: 'Utility: Remove all debuffs from target ally'
+    skillType: 1
+    targetType: 2
+    effectType: 4
+  - skillName: Sacred Chain
+    cooldown: 4
+    description: 'Hybrid AoE: 100% INT to 3 enemies; heal 3 allies for 100% INT'
+    skillType: 1
+    targetType: 7
+    effectType: 5
+  passiveSkill:
+    skillName: Atonement
+    cooldown: 0
+    description: 'Hybrid Sustain: Whenever you deal damage, heal lowest HP ally for
+      10% INT'
+    skillType: 2
+    targetType: 2
+    effectType: 1
+  primaryStat: INT
+  secondaryStat: VIT
+  classRole: Support

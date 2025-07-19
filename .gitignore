@@ -19,3 +19,5 @@ Thumbs.db
 *.pidb
 *.booproj
 *.svd
+create_guilds_issues.sh
+GDD.md

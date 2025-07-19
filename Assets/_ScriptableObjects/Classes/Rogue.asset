@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38b55d1b5b9f12e489ebd2a4e2e9e288, type: 3}
+  m_Name: Rogue
+  m_EditorClassIdentifier: 
+  className: Rogue
+  classIcon: {fileID: 0}
+  classDescription: AGI-based Assassin/Burst DPS. High single-target damage and mobility.
+  classColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
+  baseStrength: 6
+  baseAgility: 15
+  baseIntelligence: 8
+  baseDefense: 4
+  baseVitality: 8
+  baseHealth: 80
+  basicAttack:
+    skillName: Quick Stab
+    cooldown: 0
+    description: 'Melee, Buff: 100% AGI, gain +5 AGI for 1 turn'
+    skillType: 0
+    targetType: 0
+    effectType: 5
+  activeSkills:
+  - skillName: Shadowstep
+    cooldown: 2
+    description: 'Positioning, Burst: Move anywhere; deal 120% AGI to backline'
+    skillType: 1
+    targetType: 0
+    effectType: 0
+  - skillName: Poisoned Blade
+    cooldown: 3
+    description: 'DOT, Single-Target: 150% AGI + Poison (20% AGI/turn for 3 turns)'
+    skillType: 1
+    targetType: 0
+    effectType: 5
+  - skillName: Evasion
+    cooldown: 3
+    description: 'Survivability: Gain +30% Dodge for 2 turns'
+    skillType: 1
+    targetType: 4
+    effectType: 2
+  - skillName: Fan of Knives
+    cooldown: 4
+    description: 'AoE, Bleed: 110% AGI to all enemies + Bleed (15% AGI/turn, 2 turns)'
+    skillType: 1
+    targetType: 5
+    effectType: 5
+  passiveSkill:
+    skillName: Assassin's Flow
+    cooldown: 0
+    description: 'Crit Scaling: +10% crit chance if not hit last round'
+    skillType: 2
+    targetType: 4
+    effectType: 2
+  primaryStat: AGI
+  secondaryStat: STR
+  classRole: Assassin

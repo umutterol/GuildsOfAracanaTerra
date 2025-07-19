@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38b55d1b5b9f12e489ebd2a4e2e9e288, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: 
+  className: Mage
+  classIcon: {fileID: 0}
+  classDescription: INT-based AoE Caster. High magic damage and crowd control.
+  classColor: {r: 0.2, g: 0.2, b: 0.8, a: 1}
+  baseStrength: 5
+  baseAgility: 8
+  baseIntelligence: 15
+  baseDefense: 3
+  baseVitality: 8
+  baseHealth: 80
+  basicAttack:
+    skillName: Arcane Bolt
+    cooldown: 0
+    description: 'Ranged, Magic: 100% INT damage'
+    skillType: 0
+    targetType: 0
+    effectType: 0
+  activeSkills:
+  - skillName: Fireball
+    cooldown: 2
+    description: 'AoE, Burn: 150% INT + Burn (25% INT/turn, 2 turns)'
+    skillType: 1
+    targetType: 1
+    effectType: 5
+  - skillName: Frost Nova
+    cooldown: 3
+    description: 'AoE, Control: 100% INT AoE + Slow (AGI -10%, 2 turns)'
+    skillType: 1
+    targetType: 1
+    effectType: 5
+  - skillName: Mana Surge
+    cooldown: 4
+    description: 'Cooldown Utility: Reduce all own cooldowns by 1'
+    skillType: 1
+    targetType: 4
+    effectType: 4
+  - skillName: Arcane Singularity
+    cooldown: 5
+    description: 'AoE, Magic: 300% INT AoE'
+    skillType: 1
+    targetType: 5
+    effectType: 0
+  passiveSkill:
+    skillName: Arcane Mastery
+    cooldown: 0
+    description: 'Support, Aura: +5% INT to party; every 5 turns, reduce all ally
+      cooldowns by 1'
+    skillType: 2
+    targetType: 6
+    effectType: 2
+  primaryStat: INT
+  secondaryStat: AGI
+  classRole: Caster

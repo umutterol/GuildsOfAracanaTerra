@@ -1,0 +1,16 @@
+{
+  "characters": [
+    {
+      "name": "Aria",
+      "level": 5,
+      "classId": 0,
+      "traitId": 0
+    },
+    {
+      "name": "Bram",
+      "level": 3,
+      "classId": 1,
+      "traitId": 1
+    }
+  ]
+} 

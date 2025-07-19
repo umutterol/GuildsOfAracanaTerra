@@ -20,6 +20,7 @@ namespace GuildsOfArcanaTerra.Combat
         
         // ICombatant Implementation
         public string Name => characterName;
+        public string CharacterName => characterName;
         public int AGI => agility;
         public int INT => intelligence;
         public bool IsAlive => currentHealth > 0;

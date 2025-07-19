@@ -12,6 +12,7 @@ namespace GuildsOfArcanaTerra.Combat
     public interface ICombatant
     {
         string Name { get; }
+        string CharacterName { get; }
         int AGI { get; }
         int INT { get; }  // Intelligence stat for magic damage
         Dictionary<string, int> Cooldowns { get; }
@@ -31,6 +32,11 @@ namespace GuildsOfArcanaTerra.Combat
         /// Take damage from an attack or effect
         /// </summary>
         void TakeDamage(int damage);
+        
+        /// <summary>
+        /// Heal the combatant
+        /// </summary>
+        void Heal(int healAmount);
     }
 
     /// <summary>

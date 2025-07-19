@@ -1,0 +1,19 @@
+{
+  "class_mapping": {
+    "0": "Warrior",
+    "1": "Mage", 
+    "2": "Rogue",
+    "3": "Cleric",
+    "4": "Ranger"
+  },
+  "trait_mapping": {
+    "0": "GlassCannonMainTrait",
+    "1": "AFKFarmerTrait", 
+    "2": "DramaQueenTrait"
+  },
+  "notes": {
+    "classes": "Order must match the Available Classes list in CharacterDataManager inspector",
+    "traits": "Order must match the Available Traits list in CharacterDataManager inspector",
+    "usage": "Use these IDs in characters.json file for classId and traitId fields"
+  }
+} 

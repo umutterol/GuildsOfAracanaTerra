@@ -6,6 +6,7 @@ namespace GuildsOfArcanaTerra.Combat.Skills.Implementations
 {
     public class BasicAttackSkill : BaseSkill
     {
+        public BasicAttackSkill() { }
         private string skillName;
         
         public BasicAttackSkill(string name = "Basic Attack")

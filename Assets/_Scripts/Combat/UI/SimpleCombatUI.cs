@@ -24,6 +24,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         [SerializeField] private Button attackButton;
         [SerializeField] private Button healButton;
         [SerializeField] private Button resetButton;
+        [SerializeField] private Button endTurnButton;
         
         [Header("Skill Buttons")]
         [SerializeField] private Button[] skillButtons = new Button[4];
@@ -57,6 +58,9 @@ namespace GuildsOfArcanaTerra.Combat.UI
             
             if (resetButton != null)
                 resetButton.onClick.AddListener(ResetCombat);
+            
+            if (endTurnButton != null)
+                endTurnButton.onClick.AddListener(EndTurn);
             
             // Skill buttons
             for (int i = 0; i < skillButtons.Length; i++)
@@ -201,17 +205,44 @@ namespace GuildsOfArcanaTerra.Combat.UI
         }
         
         /// <summary>
+        /// End the current turn and reduce cooldowns
+        /// </summary>
+        void EndTurn()
+        {
+            if (player == null) return;
+            
+            // Reduce cooldowns for the player
+            if (player.SkillSet != null)
+            {
+                player.SkillSet.ReduceAllCooldowns();
+                AddToLog($"{player.Name}'s turn ends - cooldowns reduced!");
+            }
+            
+            // Update UI to reflect new cooldown states
+            UpdateUI();
+        }
+        
+        /// <summary>
         /// Reset combat to initial state
         /// </summary>
         void ResetCombat()
         {
             if (player != null)
+            {
                 player.ResetHealth();
+                
+                // Reset all cooldowns
+                if (player.SkillSet != null)
+                {
+                    player.SkillSet.ResetAllCooldowns();
+                }
+            }
             
             if (enemy != null)
                 enemy.ResetHealth();
             
             AddToLog("Combat reset!");
+            UpdateUI();
         }
         
         /// <summary>

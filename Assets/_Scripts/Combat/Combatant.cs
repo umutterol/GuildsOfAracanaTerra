@@ -43,6 +43,8 @@ namespace GuildsOfArcanaTerra.Combat
         [SerializeField] private ScriptableObject traitAsset; // For designer assignment (optional)
         private IRLTrait irlTrait;
 
+        public CharacterDefinition characterData;
+
         // Trait modifiers
         private float defenseModifier = 1f;
         private float damageModifier = 1f;
@@ -197,47 +199,45 @@ namespace GuildsOfArcanaTerra.Combat
                 return;
             }
             
-            if (classDefinition == null)
-            {
-                Debug.LogError($"Combatant {characterName}: Class definition is null!");
-                return;
-            }
-            
             // Clear existing skills
             skillSet.ClearSkills();
             
-            // Add basic attack
-            if (classDefinition.BasicAttack != null)
-            {
-                var basicSkill = CreateSkillFromDefinition(classDefinition.BasicAttack);
-                if (basicSkill != null)
-                {
-                    skillSet.AddSkill(basicSkill);
-                }
-            }
-            
-            // Add active skills
-            if (classDefinition.ActiveSkills != null)
-            {
-                foreach (var skillDef in classDefinition.ActiveSkills)
-                {
-                    if (skillDef != null)
-                    {
-                        var activeSkill = CreateSkillFromDefinition(skillDef);
-                        if (activeSkill != null)
-                        {
-                            skillSet.AddSkill(activeSkill);
-                        }
-                    }
-                }
-            }
-            
-            // Note: Passive skills are handled separately through the class definition
-            // They don't go into the SkillSet since they're always active
+            // For now, always use default skills to avoid null reference issues
+            // TODO: Re-enable class definition skills once SkillDefinition assets are properly configured
+            Debug.LogWarning($"Combatant {characterName}: Using default skills (class definition skills not configured)");
+            AddDefaultSkills();
             
             if (debugMode)
             {
-                Debug.Log($"Combatant {characterName}: Loaded {skillSet.SkillCount} skills from {classDefinition?.ClassName ?? "Unknown Class"}");
+                Debug.Log($"Combatant {characterName}: Loaded {skillSet.SkillCount} default skills");
+            }
+        }
+        
+        /// <summary>
+        /// Add default skills for testing when no class definition is available
+        /// </summary>
+        private void AddDefaultSkills()
+        {
+            // Add basic attack
+            var basicAttack = SkillFactory.CreateBasicAttack("Basic Attack");
+            skillSet.AddSkill(basicAttack);
+            
+            // Add a few common skills based on character name or class
+            if (characterName.ToLower().Contains("mage") || characterName.ToLower().Contains("gizem"))
+            {
+                skillSet.AddSkill(SkillFactory.CreateSkillByName("Fireball"));
+                skillSet.AddSkill(SkillFactory.CreateSkillByName("Heal"));
+            }
+            else if (characterName.ToLower().Contains("warrior") || characterName.ToLower().Contains("umut"))
+            {
+                skillSet.AddSkill(SkillFactory.CreateSkillByName("Shield Bash"));
+                skillSet.AddSkill(SkillFactory.CreateSkillByName("Cleave"));
+            }
+            else
+            {
+                // Generic skills for any character
+                skillSet.AddSkill(SkillFactory.CreateSkillByName("Fireball"));
+                skillSet.AddSkill(SkillFactory.CreateSkillByName("Heal"));
             }
         }
         

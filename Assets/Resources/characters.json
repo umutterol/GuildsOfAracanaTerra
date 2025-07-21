@@ -11,6 +11,24 @@
       "level": 3,
       "classId": 1,
       "traitId": 1
+    },
+    {
+      "name": "Luna",
+      "level": 4,
+      "classId": 2,
+      "traitId": 2
+    },
+    {
+      "name": "Thorne",
+      "level": 6,
+      "classId": 3,
+      "traitId": 0
+    },
+    {
+      "name": "Mercy",
+      "level": 4,
+      "classId": 4,
+      "traitId": 1
     }
   ]
 } 

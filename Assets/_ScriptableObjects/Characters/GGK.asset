@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a072255d8f2f3a548b76c30606d2c74e, type: 3}
+  m_Name: GGK
+  m_EditorClassIdentifier: 
+  characterName: GGK
+  maxHealth: 0
+  level: 1
+  characterClass: {fileID: 11400000, guid: 14436c14ddd5fd94e91b0c8a1017ff3a, type: 2}
+  prefab: {fileID: 3708628583355733146, guid: 5e3e5999fabbe664b8f24b1f1f756617, type: 3}
+  traits:
+  - {fileID: 11400000, guid: 58b13b40b8eba0440ae031457afc3738, type: 2}
+  skills: []

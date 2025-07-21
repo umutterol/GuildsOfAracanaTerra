@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a072255d8f2f3a548b76c30606d2c74e, type: 3}
+  m_Name: GoblinWarrior
+  m_EditorClassIdentifier: 
+  characterName: GoblinWarrior
+  maxHealth: 250
+  level: 1
+  characterClass: {fileID: 11400000, guid: 14436c14ddd5fd94e91b0c8a1017ff3a, type: 2}
+  prefab: {fileID: 348281115439041649, guid: c02404266f21fe74a946729f7c15ac72, type: 3}
+  traits: []
+  skills:
+  - 

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa3007c368f4e05459d87bdb6d5c7870, type: 3}
+  m_Name: Encounter 3
+  m_EditorClassIdentifier: 
+  EncounterName: Encounter 3
+  Enemies:
+  - Prefab: {fileID: 348281115439041649, guid: c02404266f21fe74a946729f7c15ac72, type: 3}
+    characterData: {fileID: 11400000, guid: 6e2ebe25cd61a3241b58f1bdae207692, type: 2}
+  - Prefab: {fileID: 1348962583604009403, guid: fb6acf8029fcbf44eb89719cc56ea661, type: 3}
+    characterData: {fileID: 11400000, guid: 5251032d7544c1c4ca3baa198172427f, type: 2}
+  isBossEncounter: 0

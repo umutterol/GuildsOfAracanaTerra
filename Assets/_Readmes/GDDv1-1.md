@@ -1059,6 +1059,12 @@ Design Note: Leaderboards reinforce strategic optimization and competitive expre
 * *Barks appear inline with combat or event logs*  
 * *Whispers used for Solo Quest returns or event consequences*
 
+### ***⚙️ Settings***
+* *Audio: master/music/SFX sliders; mute toggles*
+* *UI: bark frequency (Full / Important Only / None), combat popups for critical barks*
+* *Accessibility: colorblind‑safe status badges, font scaling, reduced VFX mode*
+* *Gameplay: tutorial replay, confirmation prompts for Revive Tokens*
+
 *Design Goal: Deliver fast, clear player feedback without sacrificing charm or narrative flavor.*
 
 ## ***🎓 14\. Tutorial Design – Guildmaster Certification Simulation***

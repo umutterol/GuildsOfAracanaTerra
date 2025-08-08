@@ -1017,10 +1017,11 @@ Design Note: Leaderboards reinforce strategic optimization and competitive expre
 ### ***🗺 Dungeon Selection Screen***
 
 * *World map or dungeon list with:*  
-  * *Clear time and leaderboard status*  
-  * *Enemy archetypes preview*  
+  * *Leaderboard badges (World First filled? Your best Speedrun time)*  
+  * *Enemy archetypes preview (e.g., Aggressor/Disruptor mix)*  
   * *Recommended level & trait tips*  
-  * *Lockouts or challenges (if any)*
+  * *Optional challenges/lockouts (seasonal/weekly)*  
+  * *Preview of themed rewards (drop table summary)*
 
 ### ***⚔ Combat Interface***
 

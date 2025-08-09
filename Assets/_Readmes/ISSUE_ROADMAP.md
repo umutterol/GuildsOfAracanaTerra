@@ -1,8 +1,8 @@
 # 🎯 Guilds of Arcana Terra - Issue Roadmap
 
-## 📋 Current roadmap synced with GitHub issues
+## 📋 **Issue Structure Based on GDD v1.1**
 
-This roadmap reflects the latest open/closed issues and organizes them into a prioritized development plan aligned with GDD v1.1.
+This document organizes all GitHub issues according to the Game Design Document v1.1 structure and priorities.
 
 ---
 
@@ -30,7 +30,7 @@ This roadmap reflects the latest open/closed issues and organizes them into a pr
 
 ---
 
-## 🎮 GAMEPLAY SYSTEMS (Medium Priority)
+## 🎮 **GAMEPLAY SYSTEMS (Medium Priority)**
 
 ### **Combat & Tactics**
 - **#23** - Implement Enemy Combat System (replace placeholder enemies) **[combat, enhancement]**
@@ -84,23 +84,20 @@ This roadmap reflects the latest open/closed issues and organizes them into a pr
 
 ---
 
-## 🏷️ Label Breakdown (current)
+## 🧪 **QUALITY ASSURANCE (Medium Priority)**
 
-- Combat: #45, #42, #23, #22, #21, #17, #14, #13
-- UI: #6, #9, #10
-- Dungeon: #8
-- Meta: #12, #11
-- Tutorial: #7, #18, #19, #20
+### **Testing & Debugging**
+- **#33** - Add Unit Tests (comprehensive testing) **[enhancement] - Phase 5**
+- **#31** - Add Audio and Visual Effects (polish) **[ui, enhancement] - Phase 5**
 
 ---
 
-## 🧪 Legacy / Superseded
+## 🎭 **TUTORIAL & ONBOARDING (High Priority)**
 
-- #26 - Implement Skill Effect System — Closed; replaced by #45
-- #16 - Implement Basic Enemy AI Controller — Closed as duplicate of #23
-- #15 - Combat: Skill Execution System — Closed; superseded by #45
-- #14 - Row-Based Positioning (Legacy) — Keep for context; do active work in #42
-- #13 - Prototype TestArena (Legacy) — Keep for historical/testing context
+### **Tutorial System**
+- **#18** - Script onboarding narration (The Moderator)
+- **#19** - Stage skill, turn, positioning test encounters
+- **#20** - End tutorial with simulated boss + unlock main game
 
 ---
 

@@ -16,8 +16,8 @@ namespace GuildsOfArcanaTerra.Combat
         [Header("System References")]
         [SerializeField] private PartyManager partyManager;
         [SerializeField] private CombatUIManager combatUIManager;
-        [SerializeField] private MonoBehaviour turnOrderSystem;
-        [SerializeField] private MonoBehaviour statusEffectSystem;
+        [SerializeField] private TurnOrderSystem turnOrderSystem;
+        [SerializeField] private StatusEffectSystem statusEffectSystem;
         
         [Header("Combat Settings")]
         [SerializeField] private int maxEnemies = 3;
@@ -46,10 +46,10 @@ namespace GuildsOfArcanaTerra.Combat
                 combatUIManager = FindObjectOfType<CombatUIManager>();
             
             if (turnOrderSystem == null)
-                turnOrderSystem = FindObjectOfType<MonoBehaviour>();
+                turnOrderSystem = FindObjectOfType<TurnOrderSystem>();
             
             if (statusEffectSystem == null)
-                statusEffectSystem = FindObjectOfType<MonoBehaviour>();
+                statusEffectSystem = FindObjectOfType<StatusEffectSystem>();
             
             if (partyCombatUI == null)
                 partyCombatUI = FindObjectOfType<PartyCombatUI>();
@@ -316,23 +316,19 @@ namespace GuildsOfArcanaTerra.Combat
             // Initialize turn order system (if available)
             if (turnOrderSystem != null)
             {
-                var allCombatants = new List<Combatant>();
+                var allCombatants = new List<ICombatant>();
                 allCombatants.AddRange(playerCombatants);
                 allCombatants.AddRange(enemyCombatants);
-                
-                // Try to call Initialize method if it exists
-                var initializeMethod = turnOrderSystem.GetType().GetMethod("Initialize");
-                if (initializeMethod != null)
-                {
-                    initializeMethod.Invoke(turnOrderSystem, new object[] { allCombatants });
-                }
-                
+
+                // Start combat turn order with all combatants
+                turnOrderSystem.StartCombat(allCombatants);
+
                 if (debugMode)
                 {
                     Debug.Log("Turn order initialized:");
                     for (int i = 0; i < allCombatants.Count; i++)
                     {
-                        Debug.Log($"{i + 1}. {allCombatants[i].name}");
+                        Debug.Log($"{i + 1}. {((Combatant)allCombatants[i]).name}");
                     }
                 }
             }
@@ -340,11 +336,11 @@ namespace GuildsOfArcanaTerra.Combat
             // Initialize status effect system (if available)
             if (statusEffectSystem != null)
             {
-                var initializeMethod = statusEffectSystem.GetType().GetMethod("Initialize");
-                if (initializeMethod != null)
-                {
-                    initializeMethod.Invoke(statusEffectSystem, null);
-                }
+                // Register all combatants so effects can be managed
+                foreach (var c in playerCombatants)
+                    statusEffectSystem.RegisterCombatant(c);
+                foreach (var c in enemyCombatants)
+                    statusEffectSystem.RegisterCombatant(c);
             }
             
             // Initialize combat UI
@@ -427,15 +423,7 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         private void BeginCombat()
         {
-            if (turnOrderSystem != null)
-            {
-                var startCombatMethod = turnOrderSystem.GetType().GetMethod("StartCombat");
-                if (startCombatMethod != null)
-                {
-                    startCombatMethod.Invoke(turnOrderSystem, null);
-                }
-            }
-            
+            // Turn order has already been started in InitializeCombatSystems
             Debug.Log("Combat has begun!");
         }
         
@@ -446,11 +434,10 @@ namespace GuildsOfArcanaTerra.Combat
         {
             if (turnOrderSystem != null)
             {
-                var stopCombatMethod = turnOrderSystem.GetType().GetMethod("StopCombat");
-                if (stopCombatMethod != null)
-                {
-                    stopCombatMethod.Invoke(turnOrderSystem, null);
-                }
+                // Gracefully end combat
+                // If an EndCombat method exists in TurnOrderSystem, call it; otherwise ignore
+                var endCombatMethod = turnOrderSystem.GetType().GetMethod("EndCombat", BindingFlags.Public | BindingFlags.Instance);
+                endCombatMethod?.Invoke(turnOrderSystem, null);
             }
             
             if (statusEffectSystem != null)
@@ -502,17 +489,17 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         private void EnsureCombatSystems()
         {
-            // Create placeholder systems if they don't exist
+            // Create systems if they don't exist
             if (turnOrderSystem == null)
             {
                 var turnOrderGO = new GameObject("TurnOrderSystem");
-                turnOrderSystem = turnOrderGO.AddComponent<MonoBehaviour>();
+                turnOrderSystem = turnOrderGO.AddComponent<TurnOrderSystem>();
             }
             
             if (statusEffectSystem == null)
             {
                 var statusEffectGO = new GameObject("StatusEffectSystem");
-                statusEffectSystem = statusEffectGO.AddComponent<MonoBehaviour>();
+                statusEffectSystem = statusEffectGO.AddComponent<StatusEffectSystem>();
             }
         }
         

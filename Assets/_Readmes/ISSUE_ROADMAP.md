@@ -9,8 +9,8 @@ This document organizes all GitHub issues according to the Game Design Document 
 ## 🏗️ **CORE SYSTEMS (High Priority)**
 
 ### **Combat System**
-- **#21** - Implement Missing Status Effects (Bleed, Poison, Stun, Slow, Shield) **[combat, enhancement] - Phase 1**
-- **#22** - Fix Class Definition Skill Loading (currently using default skills) **[combat, enhancement] - Phase 1**
+- ✅ **#21** - Implement Missing Status Effects (Bleed, Poison, Stun, Slow, Shield) — Completed
+- ✅ **#22** - Fix Class Definition Skill Loading (use class-specific skills) — Completed
 - **#26** - Implement Skill Effect System (placeholder effects need real implementation) **[combat, enhancement] - Phase 1**
 - **#42** - Implement Row-Based Combat Positioning (front/back row system) **[combat, enhancement] - Phase 1**
 
@@ -167,9 +167,10 @@ This document organizes all GitHub issues according to the Game Design Document 
 - Party management UI
 - Character data structure
 - ScriptableObject architecture
+- Core status effects (Burn, Bleed, Poison, Stun, Slow, Shield)
+- Class-based skill loading from `CharacterClassDefinition`
 
 ### **🔄 In Progress Systems**
-- Status effects (partial)
 - Skill system (partial)
 - Tutorial system (partial)
 - Enemy AI (placeholder)
@@ -193,8 +194,8 @@ This document organizes all GitHub issues according to the Game Design Document 
 
 ### **Phase 1: Core Combat (Issues #21, #22, #26, #42)**
 - Complete the combat system foundation
-- Implement all status effects
-- Fix skill loading from class definitions
+- ✅ Implement all status effects
+- ✅ Fix skill loading from class definitions
 - Add row-based positioning
 
 ### **Phase 2: Tutorial & Navigation (Issues #43, #44)**
@@ -223,7 +224,9 @@ This document organizes all GitHub issues according to the Game Design Document 
 
 ## 🎯 **NEXT STEPS**
 
-1. **Focus on Critical Path issues first** (#21, #22, #42) - Phase 1
+1. **Focus on remaining Phase 1 Critical Path** (#26, #42)
+   - #26: Solidify Skill Effect System (wire damage/heal/buff/debuff utilities; ensure status effect hooks; unify scaling)
+   - #42: Implement row-based positioning (front/back rows, targeting filters, positional bonuses)
 2. **Complete tutorial system** (#43) - Phase 2
 3. **Implement Guild Hall** (#44) - Phase 2
 4. **Build out character systems** (#34, #35, #36, #37) - Phase 3

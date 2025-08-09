@@ -193,23 +193,58 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         private void LoadSkills()
         {
+            // Be resilient when called outside of Play Mode (e.g., editor tools)
             if (skillSet == null)
             {
-                Debug.LogError($"Combatant {characterName}: SkillSet component not found!");
-                return;
+                skillSet = GetComponent<SkillSet>();
+                if (skillSet == null)
+                {
+                    skillSet = gameObject.AddComponent<SkillSet>();
+                }
             }
             
             // Clear existing skills
             skillSet.ClearSkills();
-            
-            // For now, always use default skills to avoid null reference issues
-            // TODO: Re-enable class definition skills once SkillDefinition assets are properly configured
-            Debug.LogWarning($"Combatant {characterName}: Using default skills (class definition skills not configured)");
-            AddDefaultSkills();
-            
+
+            var generatedSkills = new System.Collections.Generic.List<GuildsOfArcanaTerra.Combat.Skills.Interfaces.IBaseSkill>();
+
+            // Prefer skills from the assigned CharacterClassDefinition if available
+            if (classDefinition != null)
+            {
+                var defs = classDefinition.GetAllSkills();
+                if (defs != null && defs.Length > 0)
+                {
+                    foreach (var def in defs)
+                    {
+                        var skill = GuildsOfArcanaTerra.Combat.Skills.SkillFactory.CreateSkillFromDefinition(def);
+                        if (skill != null)
+                        {
+                            generatedSkills.Add(skill);
+                        }
+                    }
+                }
+            }
+
+            // Fallback: build by class name if ScriptableObject skills are not configured
+            if (generatedSkills.Count == 0)
+            {
+                if (classDefinition != null)
+                {
+                    generatedSkills = GuildsOfArcanaTerra.Combat.Skills.SkillFactory.CreateSkillSetByClass(classDefinition.ClassName);
+                }
+                else
+                {
+                    // Ultimate fallback: a very basic set
+                    generatedSkills = GuildsOfArcanaTerra.Combat.Skills.SkillFactory.CreateBasicSkillSet();
+                }
+            }
+
+            // Initialize the skill set
+            skillSet.InitializeSkills(generatedSkills);
+
             if (debugMode)
             {
-                Debug.Log($"Combatant {characterName}: Loaded {skillSet.SkillCount} default skills");
+                Debug.Log($"Combatant {characterName}: Loaded {skillSet.SkillCount} skills from class definition or factory");
             }
         }
         

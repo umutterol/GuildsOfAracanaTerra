@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic; // Added for List
+using GuildsOfArcanaTerra.Combat.Skills.Interfaces;
 
 namespace GuildsOfArcanaTerra.Combat.UI
 {
@@ -14,6 +15,9 @@ namespace GuildsOfArcanaTerra.Combat.UI
         [Header("Combatants")]
         [SerializeField] private Combatant player;
         [SerializeField] private Combatant enemy;
+        
+        [Header("Systems")]
+        [SerializeField] private StatusEffectSystem statusEffectSystem;
         
         [Header("Basic UI Elements")]
         [SerializeField] private TextMeshProUGUI playerHealthText;
@@ -31,10 +35,21 @@ namespace GuildsOfArcanaTerra.Combat.UI
         [SerializeField] private TextMeshProUGUI[] skillTexts = new TextMeshProUGUI[4];
         
         private string combatLog = "";
+        private bool isPlayerTurn = true;
+        private bool hasActedThisTurn = false;
         
         void Start()
         {
             SetupButtons();
+            // Auto-find systems if not wired
+            if (statusEffectSystem == null)
+                statusEffectSystem = FindObjectOfType<StatusEffectSystem>();
+            // Register combatants for status effects
+            if (statusEffectSystem != null)
+            {
+                if (player != null) statusEffectSystem.RegisterCombatant(player);
+                if (enemy != null) statusEffectSystem.RegisterCombatant(enemy);
+            }
             UpdateUI();
         }
         
@@ -80,6 +95,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         {
             UpdateHealthTexts();
             UpdateSkillButtons();
+            UpdateActionButtonsInteractivity();
         }
         
         /// <summary>
@@ -122,7 +138,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
                     }
                     
                     // Update button interactability
-                    bool canUse = skill.CanUse(player);
+                    bool canUse = isPlayerTurn && !hasActedThisTurn && skill.CanUse(player);
                     skillButtons[i].interactable = canUse;
                     
                     // Update button color
@@ -147,6 +163,18 @@ namespace GuildsOfArcanaTerra.Combat.UI
                 }
             }
         }
+
+        /// <summary>
+        /// Update action buttons interactivity based on turn state
+        /// </summary>
+        void UpdateActionButtonsInteractivity()
+        {
+            bool canAct = isPlayerTurn && !hasActedThisTurn;
+            if (attackButton != null) attackButton.interactable = canAct;
+            if (healButton != null) healButton.interactable = canAct;
+            if (resetButton != null) resetButton.interactable = true;
+            if (endTurnButton != null) endTurnButton.interactable = isPlayerTurn; // only player ends their turn
+        }
         
         /// <summary>
         /// Use basic attack
@@ -154,15 +182,18 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UseBasicAttack()
         {
             if (player == null || enemy == null) return;
+            if (!isPlayerTurn || hasActedThisTurn) return;
             
             // Find basic attack skill
             var basicAttack = player.GetAllSkills().Find(s => s.SkillName.ToLower().Contains("attack"));
             if (basicAttack != null)
             {
                 var targets = new List<ICombatant> { enemy };
-                SkillEffects.ExecuteSkill(basicAttack, player, targets, null);
+                SkillEffects.ExecuteSkill(basicAttack, player, targets, statusEffectSystem);
                 
                 AddToLog($"{player.Name} attacks {enemy.Name}!");
+                hasActedThisTurn = true;
+                UpdateUI();
             }
         }
         
@@ -172,15 +203,18 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UseHeal()
         {
             if (player == null) return;
+            if (!isPlayerTurn || hasActedThisTurn) return;
             
             // Find heal skill
             var healSkill = player.GetAllSkills().Find(s => s.SkillName.ToLower().Contains("heal"));
             if (healSkill != null)
             {
                 var targets = new List<ICombatant> { player };
-                SkillEffects.ExecuteSkill(healSkill, player, targets, null);
+                SkillEffects.ExecuteSkill(healSkill, player, targets, statusEffectSystem);
                 
                 AddToLog($"{player.Name} heals themselves!");
+                hasActedThisTurn = true;
+                UpdateUI();
             }
         }
         
@@ -190,6 +224,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UseSkill(int skillIndex)
         {
             if (player == null || enemy == null) return;
+            if (!isPlayerTurn || hasActedThisTurn) return;
             
             var skills = player.GetAllSkills();
             if (skillIndex >= skills.Count) return;
@@ -199,9 +234,11 @@ namespace GuildsOfArcanaTerra.Combat.UI
             
             // Execute the skill
             var targets = new List<ICombatant> { enemy };
-            SkillEffects.ExecuteSkill(skill, player, targets, null);
+            SkillEffects.ExecuteSkill(skill, player, targets, statusEffectSystem);
             
             AddToLog($"{player.Name} uses {skill.SkillName}!");
+            hasActedThisTurn = true;
+            UpdateUI();
         }
         
         /// <summary>
@@ -210,6 +247,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void EndTurn()
         {
             if (player == null) return;
+            if (!isPlayerTurn) return;
             
             // Reduce cooldowns for the player
             if (player.SkillSet != null)
@@ -217,8 +255,33 @@ namespace GuildsOfArcanaTerra.Combat.UI
                 player.SkillSet.ReduceAllCooldowns();
                 AddToLog($"{player.Name}'s turn ends - cooldowns reduced!");
             }
+
+            // Tick effects on the enemy at start of their turn and reduce durations on player
+            if (statusEffectSystem != null)
+            {
+                if (enemy != null) statusEffectSystem.TickCombatantEffects(enemy);
+                if (player != null) statusEffectSystem.ReduceCombatantEffectDurations(player);
+            }
             
-            // Update UI to reflect new cooldown states
+            // Switch to enemy turn
+            isPlayerTurn = false;
+            hasActedThisTurn = false; // reset for next turn later
+
+            // Enemy action
+            EnemyTakeAction();
+
+            // After enemy action, start player's next turn
+            if (statusEffectSystem != null)
+            {
+                if (player != null) statusEffectSystem.TickCombatantEffects(player);
+                if (enemy != null) statusEffectSystem.ReduceCombatantEffectDurations(enemy);
+            }
+
+            isPlayerTurn = true;
+            hasActedThisTurn = false;
+            AddToLog("Your turn begins!");
+
+            // Update UI to reflect new states
             UpdateUI();
         }
         
@@ -243,6 +306,43 @@ namespace GuildsOfArcanaTerra.Combat.UI
             
             AddToLog("Combat reset!");
             UpdateUI();
+        }
+
+        /// <summary>
+        /// Very simple enemy AI: choose any usable skill or fallback to basic attack
+        /// </summary>
+        void EnemyTakeAction()
+        {
+            if (enemy == null || player == null) return;
+
+            // Reduce enemy cooldowns at start of their action if needed
+            // (we already ticked effects above)
+
+            var skills = enemy.GetAllSkills();
+            IBaseSkill chosen = null;
+            // Prefer any skill that can be used
+            foreach (var s in skills)
+            {
+                if (s.CanUse(enemy)) { chosen = s; break; }
+            }
+            // Fallback to a basic attack-like skill
+            if (chosen == null)
+            {
+                chosen = skills.Find(s => s.SkillName.ToLower().Contains("attack"));
+            }
+
+            if (chosen != null)
+            {
+                var targets = new List<ICombatant> { player };
+                SkillEffects.ExecuteSkill(chosen, enemy, targets, statusEffectSystem);
+                AddToLog($"Enemy uses {chosen.SkillName}!");
+            }
+
+            // Reduce enemy cooldowns at end of their action
+            if (enemy.SkillSet != null)
+            {
+                enemy.SkillSet.ReduceAllCooldowns();
+            }
         }
         
         /// <summary>

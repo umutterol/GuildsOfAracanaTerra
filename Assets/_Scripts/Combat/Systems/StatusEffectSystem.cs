@@ -231,10 +231,7 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         public IStatusEffect CreateBleedEffect(ICombatant target, ICombatant caster, int duration = 3)
         {
-            // TODO: Implement BleedEffect class
-            // For now, return a placeholder
-            Debug.LogWarning("StatusEffectSystem: BleedEffect not yet implemented");
-            return null;
+            return new BleedEffect(target, caster, duration);
         }
         
         /// <summary>
@@ -242,9 +239,7 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         public IStatusEffect CreatePoisonEffect(ICombatant target, ICombatant caster, int duration = 3)
         {
-            // TODO: Implement PoisonEffect class
-            Debug.LogWarning("StatusEffectSystem: PoisonEffect not yet implemented");
-            return null;
+            return new PoisonEffect(target, caster, duration);
         }
         
         /// <summary>
@@ -252,9 +247,7 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         public IStatusEffect CreateStunEffect(ICombatant target, ICombatant caster, int duration = 1)
         {
-            // TODO: Implement StunEffect class
-            Debug.LogWarning("StatusEffectSystem: StunEffect not yet implemented");
-            return null;
+            return new StunEffect(target, caster, duration);
         }
         
         /// <summary>
@@ -262,9 +255,7 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         public IStatusEffect CreateSlowEffect(ICombatant target, ICombatant caster, int duration = 2)
         {
-            // TODO: Implement SlowEffect class
-            Debug.LogWarning("StatusEffectSystem: SlowEffect not yet implemented");
-            return null;
+            return new SlowEffect(target, caster, duration);
         }
         
         /// <summary>
@@ -272,9 +263,12 @@ namespace GuildsOfArcanaTerra.Combat
         /// </summary>
         public IStatusEffect CreateShieldEffect(ICombatant target, ICombatant caster, int shieldValue, int duration = 2)
         {
-            // TODO: Implement ShieldEffect class
-            Debug.LogWarning("StatusEffectSystem: ShieldEffect not yet implemented");
-            return null;
+            // If shieldValue is 0, create INT-based shield, otherwise flat-value shield
+            if (shieldValue <= 0)
+            {
+                return new ShieldEffect(target, caster, duration, 1.0f);
+            }
+            return new ShieldEffect(target, caster, shieldValue, duration);
         }
         
         #endregion

@@ -21,3 +21,7 @@ Thumbs.db
 *.svd
 create_guilds_issues.sh
 GDD.md
+*.ps1
+issues.json
+open_issues.json
+scripts/README.md 

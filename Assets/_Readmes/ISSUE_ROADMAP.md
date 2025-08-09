@@ -9,19 +9,20 @@ This document organizes all GitHub issues according to the Game Design Document 
 ## 🏗️ **CORE SYSTEMS (High Priority)**
 
 ### **Combat System**
-- **#21** - Implement Missing Status Effects (Bleed, Poison, Stun, Slow, Shield) **[combat, enhancement] - Phase 1**
-- **#22** - Fix Class Definition Skill Loading (currently using default skills) **[combat, enhancement] - Phase 1**
-- **#26** - Implement Skill Effect System (placeholder effects need real implementation) **[combat, enhancement] - Phase 1**
-- **#42** - Implement Row-Based Combat Positioning (front/back row system) **[combat, enhancement] - Phase 1**
+- **#21** - Status Effects: Core + GDD Keywords **[combat, traits] - Phase 1**
+- **#22** - Combat: Class Definition Skill Loading (Enable SO-driven Skills) **[combat, data] - Phase 1**
+- **#45** - Combat: Skill Effect System (Epic) **[combat] - Phase 1**
+- **#42** - Combat: Row-Based Positioning **[combat] - Phase 1**
 
 ### **Character & Class System**
 - **#37** - Implement All 12 Character Classes (complete class implementations) **[data, enhancement] - Phase 3**
 - **#30** - Implement Experience and Leveling System (XP and progression) **[data, enhancement]**
 
 ### **Guild & Management Systems**
-- **#39** - Implement Guild System (main progression layer) **[meta, enhancement] - Phase 4**
-- **#44** - Implement Guild Hall Main Hub (central navigation) **[ui, enhancement] - Phase 2**
-- **#28** - Implement Save/Load System (persistent storage) **[meta, enhancement]**
+- **#39** - Meta: Guild System (Expanded) **[meta] - Phase 4**
+  - Subtasks: **#80** LFG Board, **#81** Scout Other Guilds, **#82** Incoming Applications, **#83** Roster Limits, **#84** Retirement, **#85** Recruit Generation & Quality, **#86** Fame & Level Integration
+- **#44** - UI: Guild Hall Main Hub **[ui] - Phase 2**
+- **#28** - Implement Save/Load System (persistent storage) **[meta] - Phase 4**
 
 ### **Tutorial & Onboarding**
 - **#43** - Implement Complete Tutorial System (Guildmaster Certification) **[tutorial, enhancement] - Phase 2**
@@ -51,10 +52,10 @@ This document organizes all GitHub issues according to the Game Design Document 
 - **#38** - Implement Complete Gear System (upgrades, salvage, crafting) **[data, enhancement] - Phase 4**
 
 ### **Meta Systems**
-- **#40** - Implement Leaderboard System (competitive play) **[meta, enhancement] - Phase 4**
-- **#41** - Implement 'Yes, Your GM' Mini-Events (post-dungeon events) **[meta, enhancement] - Phase 4**
-- **#11** - Implement Solo Quest System (offscreen missions)
-- **#12** - Add Post-Dungeon Analytics Summary
+- **#40** - Leaderboard: System Implementation **[meta] - Phase 4**
+  - Subtasks: **#63** Data Schema, **#64** Capture Results, **#65** Per-Dungeon World First (First 100), **#66** Per-Dungeon Speedrun (Best-per-Guild), **#67** Global World First, **#68** Global Speedrun, **#69** Dungeon Screen UI, **#70** Global Leaderboard UI, **#71** Season Reset & Archival
+- **#41** - Implement 'Yes, Your GM' Mini-Events **[meta] - Phase 4**
+- **#11** - Meta: Solo Quest System **[meta] - Phase 4**
 
 ---
 
@@ -71,6 +72,15 @@ This document organizes all GitHub issues according to the Game Design Document 
 ### **Dungeon & Combat UI**
 - **#8** - Implement Craghold Dungeon Encounter Flow
 - **#32** - Improve Error Handling and Debugging **[enhancement] - Phase 5**
+
+### **Results & Analytics**
+- **#72** - Results: Post-Dungeon Screen (Epic) **[ui, meta] - Phase 4**
+  - Subtasks: **#73** UI Layout & Sections, **#74** Stats & Party Summary, **#75** Loot & Drop Integration, **#76** Leaderboard Submission Confirmation, **#77** Revive Token Flow UI, **#78** Morale & Affinity Deltas, **#79** Mini-Event & Solo Quest Summary
+- **#12** - Results: Analytics Summary **[ui, meta] - Phase 4**
+
+### **Settings & Accessibility**
+- **#87** - Settings: Centralized Menu (Audio/UI/Accessibility) **[ui] - Phase 5**
+- **#59** - UI: Bark Frequency & Delivery **[ui, traits] - Phase 5**
 
 ---
 
@@ -109,31 +119,43 @@ This document organizes all GitHub issues according to the Game Design Document 
 - **#36** - Trait Barks System **[traits, enhancement]**
 - **#37** - All 12 Character Classes **[data, enhancement]**
 
-### **✨ Phase 4: Progression & Content (4 issues)**
-- **#39** - Guild System **[meta, enhancement]**
-- **#40** - Leaderboard System **[meta, enhancement]**
-- **#41** - Mini-Events **[meta, enhancement]**
-- **#38** - Complete Gear System **[data, enhancement]**
+### **✨ Phase 4: Progression & Content**
+- **#39** - Meta: Guild System (Expanded)
+- **#40** - Leaderboard: System Implementation
+- **#41** - Implement 'Yes, Your GM' Mini-Events
+- **#38** - Meta: Gear System (Upgrades/Salvage/Crafting)
+- **#61** - Dungeon: Rewards & Drop Tables
+- **#62** - Dungeon: Sample Boss - Foreman Vex (Craghold)
+- **#72** - Results: Post-Dungeon Screen (Epic)
 
-### **🎨 Phase 5: Polish & Quality (3 issues)**
-- **#31** - Audio and Visual Effects **[ui, enhancement]**
-- **#32** - Error Handling and Debugging **[enhancement]**
-- **#33** - Unit Tests **[enhancement]**
+### **🎨 Phase 5: Polish & Quality**
+- **#31** - UI: Audio and Visual Effects
+- **#32** - Stability & Error Handling (Centralized Logger, Validation)
+- **#33** - Unit Tests (Edit/Playmode + Coverage)
+- **#87** - Settings: Centralized Menu (Audio/UI/Accessibility)
+- **#88** - Meta: Data Validators (ScriptableObjects & Lints)
+- **#89** - Tech Debt: Remove Legacy JSON Loaders (Migrate to SO Pipeline)
 
 ---
 
 ## 🏷️ **LABEL BREAKDOWN**
 
-### **Combat System** (6 issues)
-- **#21, #22, #26, #42** - Core combat mechanics
-- **#23** - Enemy AI system
-- **#13, #14, #15, #16, #17** - Combat implementation
+### **Combat System** (key issues)
+- **#21, #22, #42, #45** - Core combat mechanics
+- **#23** - Enemy System (AI + Spawning)
+- **#53** - UI: Turn Queue & Position Indicators
+- **#54** - Combat: Missing GDD Keywords
+- **#55** - Combat: Stealth/Camouflage for Shadowstep
+- **#17** - Victory & Defeat State
 
-### **UI/UX** (5 issues)
-- **#44** - Main hub navigation
-- **#25** - Party selection polish
-- **#31** - Audio/visual effects
-- **#6, #9, #10** - UI components
+### **UI/UX** (selected)
+- **#44** - Guild Hall Main Hub
+- **#25** - Party Selection - Polish
+- **#31** - Audio/Visual Effects
+- **#6, #9, #10** - Party Builder / Chat UI
+- **#58** - Affinity Visualization (Party Builder)
+- **#57** - Party Builder - Validation Enhancements
+- **#59** - Bark Frequency & Delivery
 
 ### **Character Systems** (6 issues)
 - **#34, #35, #36** - Character progression and personality
@@ -141,19 +163,20 @@ This document organizes all GitHub issues according to the Game Design Document 
 - **#30** - Experience and leveling
 - **#29** - Equipment system
 
-### **Meta Systems** (5 issues)
-- **#39, #40, #41** - Guild and progression systems
-- **#28** - Save/load system
-- **#11, #12** - Solo quests and analytics
+### **Meta Systems**
+- **#39, #40, #41** - Guild, Leaderboards, Mini-Events
+- **#28** - Save/Load System
+- **#11, #12** - Solo Quests and Results Analytics
+- **#52** - Meta: Revive Token System
+- **#56** - Dungeon: Encounter Generator & Pre-Combat Preview
 
-### **Content & Data** (6 issues)
+### **Content & Data**
 - **#27, #38** - Content pipeline and gear
-- **#37, #30, #29** - Character and equipment data
-- **#24** - Dungeon implementation
+- **#37, #30, #29** - Character kits and progression
+- **#24, #61, #62** - Dungeon implementation & rewards
 
-### **Tutorial** (4 issues)
-- **#43, #7** - Complete tutorial system
-- **#18, #19, #20** - Tutorial components
+### **Tutorial**
+- **#43** - Tutorial Epic (consolidates #7, #18, #19, #20)
 
 ### **Quality Assurance** (2 issues)
 - **#32, #33** - Error handling and testing
@@ -218,6 +241,52 @@ This document organizes all GitHub issues according to the Game Design Document 
 - Add audio and visual effects
 - Improve error handling
 - Implement unit tests
+
+---
+
+## 🧭 Prioritization (Numeric Order)
+
+Numbers indicate implementation order considering complexity (1–10), dependencies, and impact.
+
+1. #45 Combat: Skill Effect System (Epic) — complexity 9
+2. #23 Combat: Enemy System (AI + Spawning) — complexity 9
+3. #21 Status Effects: Core + GDD Keywords — complexity 8
+4. #42 Combat: Row-Based Positioning — complexity 8
+5. #22 Combat: Class Definition Skill Loading (Enable SO-driven Skills) — complexity 7
+6. #37 Combat: Class Kits - Implement 12 Classes — complexity 8
+7. #24 Dungeon: Encounter Flow & Integration — complexity 6
+8. #43 Tutorial: Complete Tutorial System — complexity 8
+9. #44 UI: Guild Hall Main Hub — complexity 6
+10. #38 Meta: Gear System (Upgrades/Salvage/Crafting) — complexity 8
+11. #39 Meta: Guild System (Expanded) — complexity 8
+12. #34 Meta: Morale System — complexity 7
+13. #29 Meta: Equipment System — complexity 7
+14. #28 Meta: Save/Load System — complexity 7
+15. #35 Meta: Combat Affinity System — complexity 6
+16. #36 Meta: Trait Barks System — complexity 6
+17. #40 Leaderboard: System Implementation — complexity 6
+18. #41 Implement 'Yes, Your GM' Mini-Events — complexity 6
+19. #30 Meta: Experience & Leveling System — complexity 6
+20. #27 Meta: Content Pipeline Expansion — complexity 5
+21. #72 Results: Post-Dungeon Screen (Epic) — complexity 6
+22. #53 UI: Turn Queue & Position Indicators — complexity 5
+23. #52 Meta: Revive Token System — complexity 5
+24. #54 Combat: Missing GDD Keywords (Silence, Mark, Camouflage, Overdrive) — complexity 6
+25. #55 Combat: Stealth/Camouflage for Shadowstep — complexity 5
+26. #56 Dungeon: Encounter Generator & Pre-Combat Preview — complexity 6
+27. #61 Dungeon: Rewards & Drop Tables — complexity 6
+28. #62 Dungeon: Sample Boss - Foreman Vex (Craghold) — complexity 6
+29. #58 UI: Affinity Visualization (Party Builder) — complexity 5
+30. #57 UI: Party Builder - Validation Enhancements — complexity 5
+31. #59 UI: Bark Frequency & Delivery — complexity 5
+32. #31 UI: Audio and Visual Effects — complexity 5
+33. #32 Stability & Error Handling (Centralized Logger, Validation) — complexity 5
+34. #33 Unit Tests (Edit/Playmode + Coverage) — complexity 5
+35. #25 UI: Party Selection - Polish — complexity 3
+
+Notes:
+- Subtasks under #39, #40, and #72 follow their parent’s slot and should be scheduled within that window.
+- Dependencies: #22 precedes #37; #21/#22/#42 precede #23; #34/#35/#36 feed into #72; #40 consumes data from #64 (Capture Results).
 
 ---
 

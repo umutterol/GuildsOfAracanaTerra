@@ -142,7 +142,7 @@ namespace GuildsOfArcanaTerra.Combat.Skills
         /// <summary>
         /// Use a specific skill
         /// </summary>
-        public bool UseSkill(IBaseSkill skill, Combatant caster = null, List<ICombatant> targets = null)
+        public bool UseSkill(IBaseSkill skill, Combatant caster = null, List<ICombatant> targets = null, StatusEffectSystem statusEffectSystem = null)
         {
             if (skill == null)
             {
@@ -162,7 +162,7 @@ namespace GuildsOfArcanaTerra.Combat.Skills
                 return false;
             }
             
-            skill.Execute(caster, targets, null);
+            skill.Execute(caster, targets, statusEffectSystem);
             OnSkillUsed?.Invoke(skill);
             return true;
         }

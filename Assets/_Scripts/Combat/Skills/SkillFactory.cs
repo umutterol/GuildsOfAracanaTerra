@@ -3,6 +3,7 @@ using UnityEngine;
 using GuildsOfArcanaTerra.Combat.Core;
 using GuildsOfArcanaTerra.ScriptableObjects.Classes;
 using GuildsOfArcanaTerra.Combat.Skills.Implementations;
+using GuildsOfArcanaTerra.Combat.Skills.Effects;
 using GuildsOfArcanaTerra.Combat.Skills.Interfaces;
 
 namespace GuildsOfArcanaTerra.Combat.Skills
@@ -185,13 +186,32 @@ namespace GuildsOfArcanaTerra.Combat.Skills
                 return null;
             }
             
-            // Try to create using the new implementation system first
+            // Primary path: create by name using typed implementations
             var skill = CreateSkillByName(skillDef.SkillName);
-            if (skill != null)
+            if (skill != null) return skill;
+
+            // Secondary path: try to build a GenericSkill from linked effect assets via Resources
+            // Convention: Resources/Skills/<SkillName> contains one or more SkillEffectSO assets
+            var loadedEffects = new System.Collections.Generic.List<SkillEffectSO>();
+            var effectAssets = Resources.LoadAll<SkillEffectSO>($"Skills/{skillDef.SkillName}");
+            if (effectAssets != null && effectAssets.Length > 0)
             {
-                return skill;
+                loadedEffects.AddRange(effectAssets);
             }
-            
+
+            if (loadedEffects.Count > 0)
+            {
+                var generic = new GenericSkill(
+                    skillDef.SkillName,
+                    skillDef.Description,
+                    skillDef.Cooldown,
+                    ConvertSkillTargetType(skillDef.TargetType),
+                    1,
+                    loadedEffects
+                );
+                return generic;
+            }
+
             // Fallback to basic attack for unknown skills
             Debug.LogWarning($"SkillFactory: Unknown skill '{skillDef.SkillName}', creating basic attack");
             return new BasicAttackSkill(skillDef.SkillName);

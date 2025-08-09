@@ -96,4 +96,26 @@ namespace GuildsOfArcanaTerra.Combat.Core
         Victory,        // Combat victory
         Defeat          // Combat defeat
     }
+
+    /// <summary>
+    /// Row-based positioning for combatants
+    /// </summary>
+    public enum RowPosition
+    {
+        Front,
+        Back
+    }
+
+    /// <summary>
+    /// Reach requirements for skills (used with row-based targeting)
+    /// </summary>
+    public enum SkillReach
+    {
+        AdjacentOnly,   // Only front-to-front or back-to-back within same side
+        MeleeFrontOnly, // Can only hit front row enemies
+        MeleeFrontThenBack, // Prefer front; can hit back if front empty
+        RangedAny,      // Can hit any enemy row
+        AllySelf,       // Self only
+        AllyAny         // Any ally row
+    }
 } 

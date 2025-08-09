@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using GuildsOfArcanaTerra.Combat.Effects;
 using UnityEngine.Events;
 
 namespace GuildsOfArcanaTerra.Combat
@@ -284,6 +285,18 @@ namespace GuildsOfArcanaTerra.Combat
                     if (debugMode)
                     {
                         Debug.Log($"TurnOrderSystem: {currentCombatant.Name}'s turn (AGI: {currentCombatant.AGI})");
+                    }
+
+                    // Auto-skip turn if stunned
+                    if (currentCombatant is MonoBehaviour mb)
+                    {
+                        var statusManager = mb.GetComponent<StatusEffectManager>();
+                        if (statusManager != null && statusManager.HasEffect("Stun"))
+                        {
+                            Debug.Log($"TurnOrderSystem: {currentCombatant.Name} is stunned and skips their turn");
+                            EndCurrentTurn();
+                            return;
+                        }
                     }
                 }
                 else

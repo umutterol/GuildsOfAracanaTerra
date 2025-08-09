@@ -16,8 +16,9 @@ namespace GuildsOfArcanaTerra.Combat.Skills.Effects
             if (targets == null || targets.Count == 0) return;
             foreach (var target in targets)
             {
-                int heal = DamageCalculator.CalculateHealing(caster.Intelligence, scaling) + Mathf.RoundToInt(baseHealing);
-                target.Heal(heal);
+                int raw = DamageCalculator.CalculateHealing(caster.Intelligence, scaling) + Mathf.RoundToInt(baseHealing);
+                target.Heal(raw);
+                Debug.Log($"[Effects] {caster.Name} -> {target.Name}: {effectName} healed {raw}");
             }
         }
     }

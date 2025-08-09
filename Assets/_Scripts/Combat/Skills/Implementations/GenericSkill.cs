@@ -42,6 +42,8 @@ namespace GuildsOfArcanaTerra.Combat.Skills.Implementations
             }
             StartCooldown();
         }
+
+        public IReadOnlyList<SkillEffectSO> Effects => _effects;
     }
 }
 

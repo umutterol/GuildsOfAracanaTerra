@@ -179,6 +179,20 @@ namespace GuildsOfArcanaTerra.EditorTools
             EditorSceneManager.SaveScene(scene, scenePath);
             AssetDatabase.SaveAssets();
 
+            // Assign demo row positions: player front, enemy back
+            if (player != null)
+            {
+                var soPlayer = new SerializedObject(player);
+                var rowProp = soPlayer.FindProperty("row");
+                if (rowProp != null) { rowProp.enumValueIndex = (int)GuildsOfArcanaTerra.Combat.Core.RowPosition.Front; soPlayer.ApplyModifiedPropertiesWithoutUndo(); }
+            }
+            if (enemy != null)
+            {
+                var soEnemy = new SerializedObject(enemy);
+                var rowProp2 = soEnemy.FindProperty("row");
+                if (rowProp2 != null) { rowProp2.enumValueIndex = (int)GuildsOfArcanaTerra.Combat.Core.RowPosition.Back; soEnemy.ApplyModifiedPropertiesWithoutUndo(); }
+            }
+
             EditorUtility.DisplayDialog("GOAT", "Test Arena scene created at Assets/_Scenes/TestArena.unity", "OK");
         }
     }

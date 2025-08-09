@@ -36,24 +36,24 @@ MonoBehaviour:
     skillType: 1
     targetType: 1
     effectType: 5
-  - skillName: Frost Nova
-    cooldown: 3
+  - skillName: Arcane Bolt
+    cooldown: 1
     description: 'AoE, Control: 100% INT AoE + Slow (AGI -10%, 2 turns)'
     skillType: 1
-    targetType: 1
-    effectType: 5
-  - skillName: Mana Surge
-    cooldown: 4
+    targetType: 0
+    effectType: 0
+  - skillName: Mana Shield
+    cooldown: 1
     description: 'Cooldown Utility: Reduce all own cooldowns by 1'
     skillType: 1
     targetType: 4
-    effectType: 4
-  - skillName: Arcane Singularity
-    cooldown: 5
+    effectType: 2
+  - skillName: Heal
+    cooldown: 1
     description: 'AoE, Magic: 300% INT AoE'
     skillType: 1
-    targetType: 5
-    effectType: 0
+    targetType: 4
+    effectType: 1
   passiveSkill:
     skillName: Arcane Mastery
     cooldown: 0

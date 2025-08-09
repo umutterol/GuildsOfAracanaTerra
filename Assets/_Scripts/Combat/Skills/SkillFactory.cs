@@ -54,6 +54,23 @@ namespace GuildsOfArcanaTerra.Combat.Skills
                 case "precise shot":
                     return new PreciseShotSkill();
                 default:
+                    // Try Resource-based effects for unknown skills
+                    var effectAssets = Resources.LoadAll<SkillEffectSO>($"Skills/{skillName}");
+                    if (effectAssets != null && effectAssets.Length > 0)
+                    {
+                        // Determine target type from reach hints on effects
+                        bool selfOrAlly = System.Array.Exists(effectAssets, e => e.reach == Core.SkillReach.AllySelf || e.reach == Core.SkillReach.AllyAny);
+                        var targetType = selfOrAlly ? Core.SkillTargetType.Self : Core.SkillTargetType.SingleEnemy;
+                        var generic = new Implementations.GenericSkill(
+                            skillName,
+                            $"Effect-driven {skillName}",
+                            3,
+                            targetType,
+                            1,
+                            new System.Collections.Generic.List<SkillEffectSO>(effectAssets)
+                        );
+                        return generic;
+                    }
                     Debug.LogWarning($"SkillFactory: Unknown skill '{skillName}', creating basic attack");
                     return CreateBasicAttack();
             }
@@ -98,9 +115,9 @@ namespace GuildsOfArcanaTerra.Combat.Skills
             
             // Active skills
             skills.Add(CreateSkillByName("Fireball"));
-            skills.Add(CreateBasicAttack("Ice Storm")); // Placeholder for Ice Storm
             skills.Add(CreateSkillByName("Heal"));
-            skills.Add(CreateBasicAttack("Mana Shield")); // Placeholder for Mana Shield
+            skills.Add(CreateSkillByName("Mana Shield"));
+            skills.Add(CreateBasicAttack("Ice Storm")); // Placeholder for Ice Storm (beyond first 4)
             
             return skills;
         }
@@ -186,11 +203,7 @@ namespace GuildsOfArcanaTerra.Combat.Skills
                 return null;
             }
             
-            // Primary path: create by name using typed implementations
-            var skill = CreateSkillByName(skillDef.SkillName);
-            if (skill != null) return skill;
-
-            // Secondary path: try to build a GenericSkill from linked effect assets via Resources
+            // Primary path: try to build a GenericSkill from linked effect assets via Resources
             // Convention: Resources/Skills/<SkillName> contains one or more SkillEffectSO assets
             var loadedEffects = new System.Collections.Generic.List<SkillEffectSO>();
             var effectAssets = Resources.LoadAll<SkillEffectSO>($"Skills/{skillDef.SkillName}");
@@ -212,9 +225,22 @@ namespace GuildsOfArcanaTerra.Combat.Skills
                 return generic;
             }
 
-            // Fallback to basic attack for unknown skills
-            Debug.LogWarning($"SkillFactory: Unknown skill '{skillDef.SkillName}', creating basic attack");
-            return new BasicAttackSkill(skillDef.SkillName);
+            // Secondary path: create by name using typed implementations (no BasicAttack fallback)
+            switch (skillDef.SkillName.ToLower())
+            {
+                case "shield bash": return new ShieldBashSkill();
+                case "cleave": return new CleaveSkill();
+                case "fireball": return new FireballSkill();
+                case "arcane bolt": return new ArcaneBoltSkill();
+                case "heal": return new HealSkill();
+                case "quick stab": return new QuickStabSkill();
+                case "shadowstep": return new ShadowstepSkill();
+                case "precise shot": return new PreciseShotSkill();
+            }
+
+            // Fallback: return null to avoid silently binding to a basic attack
+            Debug.LogWarning($"SkillFactory: Unknown skill '{skillDef.SkillName}', returning null (no auto-basic)");
+            return null;
         }
         
         /// <summary>

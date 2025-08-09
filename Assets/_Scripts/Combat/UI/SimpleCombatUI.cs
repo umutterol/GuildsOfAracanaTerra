@@ -23,6 +23,8 @@ namespace GuildsOfArcanaTerra.Combat.UI
         [SerializeField] private TextMeshProUGUI playerHealthText;
         [SerializeField] private TextMeshProUGUI enemyHealthText;
         [SerializeField] private TextMeshProUGUI combatLogText;
+        [SerializeField] private TextMeshProUGUI playerEffectsText;
+        [SerializeField] private TextMeshProUGUI enemyEffectsText;
         
         [Header("Action Buttons")]
         [SerializeField] private Button attackButton;
@@ -94,6 +96,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UpdateUI()
         {
             UpdateHealthTexts();
+            UpdateEffectsTexts();
             UpdateSkillButtons();
             UpdateActionButtonsInteractivity();
         }
@@ -113,6 +116,31 @@ namespace GuildsOfArcanaTerra.Combat.UI
                 enemyHealthText.text = $"Enemy: {enemy.CurrentHealth}/{enemy.MaxHealth}";
             }
         }
+
+        void UpdateEffectsTexts()
+        {
+            if (statusEffectSystem == null) return;
+            if (playerEffectsText != null && player != null)
+            {
+                playerEffectsText.text = BuildEffectsSummary(player);
+            }
+            if (enemyEffectsText != null && enemy != null)
+            {
+                enemyEffectsText.text = BuildEffectsSummary(enemy);
+            }
+        }
+
+        string BuildEffectsSummary(Combatant c)
+        {
+            var effects = statusEffectSystem.GetCombatantEffects(c);
+            if (effects == null || effects.Count == 0) return "Effects: None";
+            var parts = new System.Collections.Generic.List<string>();
+            foreach (var e in effects)
+            {
+                parts.Add($"{e.Name}({e.RemainingDuration})");
+            }
+            return "Effects: " + string.Join(", ", parts);
+        }
         
         /// <summary>
         /// Update skill buttons with current skills
@@ -122,6 +150,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
             if (player == null) return;
             
             var skills = player.GetAllSkills();
+            bool stunned = IsStunned(player);
             
             for (int i = 0; i < skillButtons.Length; i++)
             {
@@ -138,7 +167,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
                     }
                     
                     // Update button interactability
-                    bool canUse = isPlayerTurn && !hasActedThisTurn && skill.CanUse(player);
+                    bool canUse = isPlayerTurn && !hasActedThisTurn && !stunned && skill.CanUse(player);
                     skillButtons[i].interactable = canUse;
                     
                     // Update button color
@@ -169,7 +198,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         /// </summary>
         void UpdateActionButtonsInteractivity()
         {
-            bool canAct = isPlayerTurn && !hasActedThisTurn;
+            bool canAct = isPlayerTurn && !hasActedThisTurn && !IsStunned(player);
             if (attackButton != null) attackButton.interactable = canAct;
             if (healButton != null) healButton.interactable = canAct;
             if (resetButton != null) resetButton.interactable = true;
@@ -182,7 +211,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UseBasicAttack()
         {
             if (player == null || enemy == null) return;
-            if (!isPlayerTurn || hasActedThisTurn) return;
+            if (!isPlayerTurn || hasActedThisTurn || IsStunned(player)) return;
             
             // Find basic attack skill
             var basicAttack = player.GetAllSkills().Find(s => s.SkillName.ToLower().Contains("attack"));
@@ -203,7 +232,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UseHeal()
         {
             if (player == null) return;
-            if (!isPlayerTurn || hasActedThisTurn) return;
+            if (!isPlayerTurn || hasActedThisTurn || IsStunned(player)) return;
             
             // Find heal skill
             var healSkill = player.GetAllSkills().Find(s => s.SkillName.ToLower().Contains("heal"));
@@ -224,7 +253,7 @@ namespace GuildsOfArcanaTerra.Combat.UI
         void UseSkill(int skillIndex)
         {
             if (player == null || enemy == null) return;
-            if (!isPlayerTurn || hasActedThisTurn) return;
+            if (!isPlayerTurn || hasActedThisTurn || IsStunned(player)) return;
             
             var skills = player.GetAllSkills();
             if (skillIndex >= skills.Count) return;
@@ -232,13 +261,68 @@ namespace GuildsOfArcanaTerra.Combat.UI
             var skill = skills[skillIndex];
             if (!skill.CanUse(player)) return;
             
+            // Build targets based on skill target type
+            var targets = BuildTargetsForSkill(skill);
+            if (targets == null || targets.Count == 0) return;
+            
             // Execute the skill
-            var targets = new List<ICombatant> { enemy };
             SkillEffects.ExecuteSkill(skill, player, targets, statusEffectSystem);
             
             AddToLog($"{player.Name} uses {skill.SkillName}!");
             hasActedThisTurn = true;
             UpdateUI();
+        }
+
+        List<ICombatant> BuildTargetsForSkill(IBaseSkill skill)
+        {
+            var result = new List<ICombatant>();
+            var reach = GuildsOfArcanaTerra.Combat.Core.SkillReach.RangedAny;
+            if (skill is GuildsOfArcanaTerra.Combat.Skills.Implementations.GenericSkill gen && gen.Effects.Count > 0)
+            {
+                foreach (var e in gen.Effects)
+                {
+                    if ((int)e.reach < (int)reach) reach = e.reach;
+                }
+            }
+            switch (skill.TargetType)
+            {
+                case Combat.Core.SkillTargetType.SingleEnemy:
+                    if (enemy != null && enemy.IsAlive && TargetSatisfiesReach(reach, enemy)) result.Add(enemy);
+                    break;
+                case Combat.Core.SkillTargetType.SingleAlly:
+                case Combat.Core.SkillTargetType.Self:
+                    if (player != null && player.IsAlive) result.Add(player);
+                    break;
+                case Combat.Core.SkillTargetType.AllEnemies:
+                    if (enemy != null && enemy.IsAlive && TargetSatisfiesReach(reach, enemy)) result.Add(enemy);
+                    break;
+                case Combat.Core.SkillTargetType.AllAllies:
+                    if (player != null && player.IsAlive) result.Add(player);
+                    break;
+                case Combat.Core.SkillTargetType.SingleAny:
+                    // Default to enemy if alive, else self
+                    if (enemy != null && enemy.IsAlive && TargetSatisfiesReach(reach, enemy)) result.Add(enemy); else if (player != null && player.IsAlive) result.Add(player);
+                    break;
+                case Combat.Core.SkillTargetType.AllAny:
+                    if (player != null && player.IsAlive) result.Add(player);
+                    if (enemy != null && enemy.IsAlive && TargetSatisfiesReach(reach, enemy)) result.Add(enemy);
+                    break;
+            }
+            return result;
+        }
+
+        bool TargetSatisfiesReach(GuildsOfArcanaTerra.Combat.Core.SkillReach reach, Combatant tgt)
+        {
+            switch (reach)
+            {
+                case GuildsOfArcanaTerra.Combat.Core.SkillReach.MeleeFrontOnly:
+                    return tgt.Row == GuildsOfArcanaTerra.Combat.Core.RowPosition.Front;
+                case GuildsOfArcanaTerra.Combat.Core.SkillReach.MeleeFrontThenBack:
+                    return true; // Simple arena: allow both rows; full logic belongs in party UI with team context
+                case GuildsOfArcanaTerra.Combat.Core.SkillReach.RangedAny:
+                default:
+                    return true;
+            }
         }
         
         /// <summary>
@@ -279,10 +363,23 @@ namespace GuildsOfArcanaTerra.Combat.UI
 
             isPlayerTurn = true;
             hasActedThisTurn = false;
-            AddToLog("Your turn begins!");
+            if (IsStunned(player))
+            {
+                AddToLog($"{player.Name} is stunned and cannot act!");
+            }
+            else
+            {
+                AddToLog("Your turn begins!");
+            }
 
             // Update UI to reflect new states
             UpdateUI();
+        }
+
+        bool IsStunned(Combatant c)
+        {
+            if (c == null || statusEffectSystem == null) return false;
+            return statusEffectSystem.HasEffect(c, "Stun");
         }
         
         /// <summary>

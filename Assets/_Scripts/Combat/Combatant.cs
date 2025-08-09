@@ -35,6 +35,9 @@ namespace GuildsOfArcanaTerra.Combat
         [Header("Systems")]
         [SerializeField] private SkillSet skillSet;
         [SerializeField] private StatusEffectManager statusEffectManager;
+
+        [Header("Positioning")]
+        [SerializeField] private GuildsOfArcanaTerra.Combat.Core.RowPosition row = GuildsOfArcanaTerra.Combat.Core.RowPosition.Front;
         
         [Header("Debug")]
         [SerializeField] private bool debugMode = true;
@@ -85,6 +88,7 @@ namespace GuildsOfArcanaTerra.Combat
         public SkillSet SkillSet => skillSet;
         public StatusEffectManager StatusEffectManager => statusEffectManager;
         public IRLTrait Trait => irlTrait;
+        public GuildsOfArcanaTerra.Combat.Core.RowPosition Row => row;
         public float DefenseModifier => defenseModifier;
         public float DamageModifier => damageModifier;
         public float CritModifier => critModifier;
@@ -239,12 +243,17 @@ namespace GuildsOfArcanaTerra.Combat
                 }
             }
 
-            // Initialize the skill set
-            skillSet.InitializeSkills(generatedSkills);
+            // Initialize the skill set with only non-null skills
+            var nonNullSkills = generatedSkills.FindAll(s => s != null);
+            skillSet.InitializeSkills(nonNullSkills);
 
             if (debugMode)
             {
                 Debug.Log($"Combatant {characterName}: Loaded {skillSet.SkillCount} skills from class definition or factory");
+                if (nonNullSkills.Count != generatedSkills.Count)
+                {
+                    Debug.LogWarning($"Combatant {characterName}: Skipped {generatedSkills.Count - nonNullSkills.Count} unknown skills (returned null)");
+                }
             }
         }
         
@@ -377,16 +386,34 @@ namespace GuildsOfArcanaTerra.Combat
         public void TakeDamage(int damage)
         {
             if (!IsAlive) return;
-            
+
+            int damageAfterShield = damage;
+
+            // Route damage through active Shield effect if present
+            if (statusEffectManager != null)
+            {
+                var shield = statusEffectManager.GetEffect("Shield") as GuildsOfArcanaTerra.Combat.Effects.ShieldEffect;
+                if (shield != null && !shield.IsExpired)
+                {
+                    damageAfterShield = shield.AbsorbDamage(damageAfterShield);
+
+                    // If shield is depleted or expired, remove it
+                    if (shield.IsExpired)
+                    {
+                        statusEffectManager.RemoveEffect(shield);
+                    }
+                }
+            }
+
             // Apply defense modifier
-            float finalDamage = damage * (1f - (defenseModifier - 1f));
+            float finalDamage = damageAfterShield * (1f - (defenseModifier - 1f));
             int actualDamage = Mathf.RoundToInt(finalDamage);
             
             currentHealth = Mathf.Max(0, currentHealth - actualDamage);
             
             if (debugMode)
             {
-                Debug.Log($"Combatant {characterName}: Took {actualDamage} damage (base: {damage}, defense mod: {defenseModifier:F2}) - HP: {currentHealth}/{maxHealth}");
+                Debug.Log($"Combatant {characterName}: Took {actualDamage} damage (incoming: {damage}, after shield: {damageAfterShield}, defense mod: {defenseModifier:F2}) - HP: {currentHealth}/{maxHealth}");
             }
             
             OnDamageTaken?.Invoke(this);

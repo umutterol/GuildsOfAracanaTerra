@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using GuildsOfArcanaTerra.Combat; // For Combatant, ICombatant
 using GuildsOfArcanaTerra.Combat.Core;
 
 namespace GuildsOfArcanaTerra.Combat.Skills.Effects
@@ -30,12 +31,17 @@ namespace GuildsOfArcanaTerra.Combat.Skills.Effects
                     _ => caster.Strength
                 };
 
-                int baseCalc = scalingStat == DamageScalingStat.Intelligence
-                    ? DamageCalculator.CalculateMagicalDamage(attackerStat, target.Defense, scaling)
-                    : DamageCalculator.CalculatePhysicalDamage(attackerStat, target.Defense, scaling);
+                int targetDefense = (target is Combatant ct) ? ct.Defense : 0;
 
-                int withCrit = DamageCalculator.CalculateDamageWithCrit(baseCalc + Mathf.RoundToInt(baseDamage), critChance, critMultiplier);
+                int baseCalc = scalingStat == DamageScalingStat.Intelligence
+                    ? DamageCalculator.CalculateMagicalDamage(attackerStat, targetDefense, scaling)
+                    : DamageCalculator.CalculatePhysicalDamage(attackerStat, targetDefense, scaling);
+
+                int raw = baseCalc + Mathf.RoundToInt(baseDamage);
+                int withCrit = DamageCalculator.CalculateDamageWithCrit(raw, critChance, critMultiplier);
                 target.TakeDamage(withCrit);
+
+                Debug.Log($"[Effects] {caster.Name} -> {target.Name}: {effectName} dealt {withCrit} damage (raw:{raw}, def:{targetDefense}, crit:{(withCrit>raw)})");
             }
         }
     }

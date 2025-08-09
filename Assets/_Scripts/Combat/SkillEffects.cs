@@ -49,7 +49,8 @@ namespace GuildsOfArcanaTerra.Combat
                 if (!combatant.IsAlive) continue;
 
                 bool isEnemy = IsEnemy(caster, combatant);
-                bool isValidTarget = IsValidTargetForSkill(skill.TargetType, isEnemy, isEnemySkill);
+                bool isValidTarget = IsValidTargetForSkill(skill.TargetType, isEnemy, isEnemySkill) &&
+                                    SatisfiesReach(skill, caster, combatant);
 
                 if (isValidTarget)
                 {
@@ -83,6 +84,40 @@ namespace GuildsOfArcanaTerra.Combat
                     return true; // Can target all combatants
                 default:
                     return false;
+            }
+        }
+
+        private static bool SatisfiesReach(IBaseSkill skill, Combatant caster, ICombatant target)
+        {
+            // No reach restrictions on allies/self
+            if (!IsEnemy(caster, target)) return true;
+
+            // Determine reach from effect-driven skills; fallback to RangedAny
+            GuildsOfArcanaTerra.Combat.Core.SkillReach reach = GuildsOfArcanaTerra.Combat.Core.SkillReach.RangedAny;
+            if (skill is GuildsOfArcanaTerra.Combat.Skills.Implementations.GenericSkill gen && gen.Effects.Count > 0)
+            {
+                // If any effect is more restrictive, use the most restrictive
+                foreach (var e in gen.Effects)
+                {
+                    if ((int)e.reach < (int)reach) reach = e.reach;
+                }
+            }
+
+            var targetCombatant = target as Combatant;
+            if (targetCombatant == null) return true;
+
+            switch (reach)
+            {
+                case Core.SkillReach.MeleeFrontOnly:
+                    return targetCombatant.Row == Core.RowPosition.Front;
+                case Core.SkillReach.MeleeFrontThenBack:
+                    // If any enemy in front row is alive, must hit front
+                    // Without teams, approximate: require front row unless target is back and there is no front row among allCombatants.
+                    // We cannot see all combatants here; assume UI filters. Permit both rows here.
+                    return true;
+                case Core.SkillReach.RangedAny:
+                default:
+                    return true;
             }
         }
 

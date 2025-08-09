@@ -424,9 +424,35 @@ namespace GuildsOfArcanaTerra.Combat.UI
                 case SkillTargetType.SingleEnemy:
                 case SkillTargetType.SingleAlly:
                 case SkillTargetType.SingleAny:
-                    selectedTargets.Clear();
-                    selectedTargets.Add(target);
-                    ExecuteSkill();
+                    // Support multi-target selection if MaxTargets > 1
+                    if (selectedSkill.MaxTargets > 1)
+                    {
+                        if (selectedTargets.Contains(target))
+                        {
+                            selectedTargets.Remove(target);
+                        }
+                        else
+                        {
+                            if (selectedTargets.Count < selectedSkill.MaxTargets)
+                                selectedTargets.Add(target);
+                        }
+
+                        // Auto-execute when enough targets are chosen
+                        if (selectedTargets.Count == selectedSkill.MaxTargets)
+                        {
+                            ExecuteSkill();
+                        }
+                        else
+                        {
+                            UpdateTargetingInfo();
+                        }
+                    }
+                    else
+                    {
+                        selectedTargets.Clear();
+                        selectedTargets.Add(target);
+                        ExecuteSkill();
+                    }
                     break;
                     
                 case SkillTargetType.AllEnemies:
@@ -444,6 +470,20 @@ namespace GuildsOfArcanaTerra.Combat.UI
                     selectedTargets.Add(selectedPlayerCard.Combatant);
                     ExecuteSkill();
                     break;
+            }
+        }
+
+        private void UpdateTargetingInfo()
+        {
+            if (targetingInfoText == null) return;
+            if (selectedSkill == null) { targetingInfoText.text = ""; return; }
+
+            if (selectedSkill.MaxTargets > 1 &&
+                (selectedSkill.TargetType == SkillTargetType.SingleEnemy ||
+                 selectedSkill.TargetType == SkillTargetType.SingleAlly ||
+                 selectedSkill.TargetType == SkillTargetType.SingleAny))
+            {
+                targetingInfoText.text = $"Select {selectedTargets.Count}/{selectedSkill.MaxTargets} targets for {selectedSkill.SkillName}";
             }
         }
         

@@ -60,6 +60,11 @@ namespace GuildsOfArcanaTerra.EditorTools
                 asset.scaling = scaling;
                 asset.scalingStat = stat;
                 asset.critChance = critChance;
+                // Set default reach hints
+                if (skillName == "Quick Stab" || skillName == "Cleave" || skillName == "Shield Bash")
+                    asset.reach = GuildsOfArcanaTerra.Combat.Core.SkillReach.MeleeFrontOnly;
+                else
+                    asset.reach = GuildsOfArcanaTerra.Combat.Core.SkillReach.RangedAny;
                 AssetDatabase.CreateAsset(asset, assetPath);
             }
         }
@@ -77,6 +82,9 @@ namespace GuildsOfArcanaTerra.EditorTools
                 asset.effectName = $"{skillName} Heal";
                 asset.baseHealing = baseHealing;
                 asset.scaling = scaling;
+                asset.reach = skillName == "Heal"
+                    ? GuildsOfArcanaTerra.Combat.Core.SkillReach.AllyAny
+                    : GuildsOfArcanaTerra.Combat.Core.SkillReach.RangedAny;
                 AssetDatabase.CreateAsset(asset, assetPath);
             }
         }
@@ -94,6 +102,11 @@ namespace GuildsOfArcanaTerra.EditorTools
                 asset.effectName = $"{skillName} {kind}";
                 asset.statusKind = kind;
                 asset.duration = duration;
+                // Reach: shields/buffs are ally/self; debuffs are enemy
+                if (kind == ApplyStatusEffectSO.StatusKind.ShieldFlat || kind == ApplyStatusEffectSO.StatusKind.ShieldIntScaling)
+                    asset.reach = GuildsOfArcanaTerra.Combat.Core.SkillReach.AllySelf;
+                else
+                    asset.reach = GuildsOfArcanaTerra.Combat.Core.SkillReach.RangedAny;
                 AssetDatabase.CreateAsset(asset, assetPath);
             }
         }

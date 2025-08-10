@@ -94,6 +94,7 @@ namespace GuildsOfArcanaTerra.Combat
         public float CritModifier => critModifier;
         public bool AlwaysActsLast => alwaysActsLast;
         public bool Overdrive => overdrive;
+        public void SetRow(GuildsOfArcanaTerra.Combat.Core.RowPosition newRow) { row = newRow; }
         
         private void Awake()
         {

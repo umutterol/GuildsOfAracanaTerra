@@ -133,12 +133,16 @@ namespace GuildsOfArcanaTerra.EditorTools
             var enemyHealthTMP = CreateTMP("EnemyHealthText", canvasGO.transform, new Vector2(20, -60));
             var logTMP = CreateTMP("CombatLogText", canvasGO.transform, new Vector2(20, -120), 20);
             logTMP.rectTransform.sizeDelta = new Vector2(900, 200);
+            var playerEffectsTMP = CreateTMP("PlayerEffectsText", canvasGO.transform, new Vector2(20, -90), 20);
+            var enemyEffectsTMP = CreateTMP("EnemyEffectsText", canvasGO.transform, new Vector2(20, -100), 20);
 
             // Action buttons row
             var attackBtn = CreateButton("AttackButton", canvasGO.transform, new Vector2(20, -340), "Basic Attack");
             var healBtn = CreateButton("HealButton", canvasGO.transform, new Vector2(210, -340), "Heal");
             var resetBtn = CreateButton("ResetButton", canvasGO.transform, new Vector2(400, -340), "Reset");
             var endTurnBtn = CreateButton("EndTurnButton", canvasGO.transform, new Vector2(590, -340), "End Turn");
+            var togglePlayerRowBtn = CreateButton("TogglePlayerRowButton", canvasGO.transform, new Vector2(780, -340), "Toggle Player Row");
+            var toggleEnemyRowBtn = CreateButton("ToggleEnemyRowButton", canvasGO.transform, new Vector2(970, -340), "Toggle Enemy Row");
 
             // Skill buttons row
             var skillButtons = new Button[4];
@@ -158,10 +162,14 @@ namespace GuildsOfArcanaTerra.EditorTools
             so.FindProperty("playerHealthText").objectReferenceValue = playerHealthTMP;
             so.FindProperty("enemyHealthText").objectReferenceValue = enemyHealthTMP;
             so.FindProperty("combatLogText").objectReferenceValue = logTMP;
+            so.FindProperty("playerEffectsText").objectReferenceValue = playerEffectsTMP;
+            so.FindProperty("enemyEffectsText").objectReferenceValue = enemyEffectsTMP;
             so.FindProperty("attackButton").objectReferenceValue = attackBtn;
             so.FindProperty("healButton").objectReferenceValue = healBtn;
             so.FindProperty("resetButton").objectReferenceValue = resetBtn;
             so.FindProperty("endTurnButton").objectReferenceValue = endTurnBtn;
+            so.FindProperty("togglePlayerRowButton").objectReferenceValue = togglePlayerRowBtn;
+            so.FindProperty("toggleEnemyRowButton").objectReferenceValue = toggleEnemyRowBtn;
 
             var skillButtonsProp = so.FindProperty("skillButtons");
             if (skillButtonsProp != null && skillButtonsProp.isArray)

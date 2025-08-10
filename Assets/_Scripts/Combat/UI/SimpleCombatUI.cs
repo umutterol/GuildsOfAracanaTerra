@@ -412,25 +412,50 @@ namespace GuildsOfArcanaTerra.Combat.UI
         {
             if (enemy == null || player == null) return;
 
-            // Reduce enemy cooldowns at start of their action if needed
-            // (we already ticked effects above)
+            // Skip if stunned
+            if (IsStunned(enemy))
+            {
+                AddToLog($"Enemy is stunned and skips the turn!");
+                // Reduce enemy cooldowns at end of skipped action
+                if (enemy.SkillSet != null)
+                {
+                    enemy.SkillSet.ReduceAllCooldowns();
+                }
+                return;
+            }
 
             var skills = enemy.GetAllSkills();
             IBaseSkill chosen = null;
-            // Prefer any skill that can be used
+            List<ICombatant> targets = null;
+
+            // Build combatant list for reach validation
+            var all = new List<ICombatant> { player, enemy };
+
+            // Pick first usable skill with at least one valid target
             foreach (var s in skills)
             {
-                if (s.CanUse(enemy)) { chosen = s; break; }
+                if (!s.CanUse(enemy)) continue;
+                var candidateTargets = SkillEffects.GetValidTargets(s, enemy, all, true);
+                if (candidateTargets != null && candidateTargets.Count > 0)
+                {
+                    chosen = s;
+                    targets = candidateTargets;
+                    break;
+                }
             }
-            // Fallback to a basic attack-like skill
+
+            // Fallbacks
             if (chosen == null)
             {
                 chosen = skills.Find(s => s.SkillName.ToLower().Contains("attack"));
+                if (chosen != null)
+                {
+                    targets = new List<ICombatant> { player };
+                }
             }
 
-            if (chosen != null)
+            if (chosen != null && targets != null && targets.Count > 0)
             {
-                var targets = new List<ICombatant> { player };
                 SkillEffects.ExecuteSkill(chosen, enemy, targets, statusEffectSystem);
                 AddToLog($"Enemy uses {chosen.SkillName}!");
             }

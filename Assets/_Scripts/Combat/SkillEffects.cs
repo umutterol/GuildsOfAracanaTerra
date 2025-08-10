@@ -50,7 +50,7 @@ namespace GuildsOfArcanaTerra.Combat
 
                 bool isEnemy = IsEnemy(caster, combatant);
                 bool isValidTarget = IsValidTargetForSkill(skill.TargetType, isEnemy, isEnemySkill) &&
-                                    SatisfiesReach(skill, caster, combatant);
+                                    SatisfiesReach(skill, caster, combatant, allCombatants);
 
                 if (isValidTarget)
                 {
@@ -87,7 +87,7 @@ namespace GuildsOfArcanaTerra.Combat
             }
         }
 
-        private static bool SatisfiesReach(IBaseSkill skill, Combatant caster, ICombatant target)
+        private static bool SatisfiesReach(IBaseSkill skill, Combatant caster, ICombatant target, List<ICombatant> allCombatants)
         {
             // No reach restrictions on allies/self
             if (!IsEnemy(caster, target)) return true;
@@ -111,10 +111,9 @@ namespace GuildsOfArcanaTerra.Combat
                 case Core.SkillReach.MeleeFrontOnly:
                     return targetCombatant.Row == Core.RowPosition.Front;
                 case Core.SkillReach.MeleeFrontThenBack:
-                    // If any enemy in front row is alive, must hit front
-                    // Without teams, approximate: require front row unless target is back and there is no front row among allCombatants.
-                    // We cannot see all combatants here; assume UI filters. Permit both rows here.
-                    return true;
+                    // If any enemy in front row is alive, must hit front; otherwise back is allowed
+                    bool anyFrontAlive = allCombatants != null && allCombatants.Exists(c => c.IsAlive && IsEnemy(caster, c) && (c as Combatant)?.Row == Core.RowPosition.Front);
+                    return anyFrontAlive ? targetCombatant.Row == Core.RowPosition.Front : true;
                 case Core.SkillReach.RangedAny:
                 default:
                     return true;
